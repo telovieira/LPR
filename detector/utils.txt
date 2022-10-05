@@ -1,0 +1,62 @@
+docker build -t lpr-restapi:v1 .
+
+docker run -d -p 5000:5000 --name api-server lpr-restapi:v1
+
+docker run -it -p 5000:5000 --name api-server lpr-restapi:v1
+
+docker start -d -p 5000:5000 --name api-server lpr-restapi:v1
+
+docker exec -it api-server /bin/sh
+
+docker container ps -a
+docker images
+
+docker inspect DOCKER_ID
+
+docker run -d -p 5005:5005 --name plate-server plate-detect
+
+
+
+from flask import Flask, request
+from  detector.plate_detection import LicensePlateDetector
+from werkzeug.utils import secure_filename
+import json
+import time
+import os
+
+
+UPLOAD_FOLDER = '/root/license_plates/img'
+
+
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+lpd = LicensePlateDetector(
+    pth_weights='/root/license_plates/cfg/yolov4_custom_best.weights',
+    pth_cfg='/root/license_plates/cfg/yolov4_custom.cfg',
+    pth_model='/root/license_plates/cfg/letters_numbers_model_aug.h5'
+)
+
+
+@app.route('/')
+def home():
+    return "License Detector Works!!!"
+
+
+@app.route('/api/tasks')
+def tasks():
+    return lpd.get_tasks()
+
+
+@app.route('/api/post')
+def img_post():
+
+
+apt-get install docker-ce=5:20.10.15~3-0~ubuntu-focal docker-ce-cli=5:20.10.15~3-0~ubuntu-focal containerd.io docker-compose-plugin
+
+wget https://www.python.org/ftp/python/3.7.11/Python-3.7.11.tgz
+
+ssh ubuntu@elb-lpr-294763479.us-east-1.elb.amazonaws.com -i my-ubuntu-keypar.pem
+
+curl -X POST http://elb-lpr-294763479.us-east-1.elb.amazonaws.com:8088/api/lpr -F file=@Downloads/camera-installation-example-night.jpg
+curl -X POST http://elb-lpr-294763479.us-east-1.elb.amazonaws.com:8088/api/lpr -F file=@make_test_images/placa_jeep.jpeg
